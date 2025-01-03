@@ -32,6 +32,8 @@ impl Display for PeerError {
     }
 }
 
+impl std::error::Error for PeerError {}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Request {
     pub operation: String,
@@ -51,7 +53,6 @@ impl Display for Request {
     }
 }
 
-impl std::error::Error for PeerError {}
 
 #[derive(Debug)]
 pub struct Peer {
@@ -240,7 +241,7 @@ impl Peer {
 }
 
 pub fn poisson_event_rate(lambda: f64) -> Result<Duration, PoissonError> {
-    let poisson = Poisson::new(lambda)?;
+    let poisson = Poisson::new(60.0/lambda)?;
     let mut rng = thread_rng();
     let wait_time = poisson.sample(&mut rng);
     Ok(Duration::from_secs_f64(wait_time))
